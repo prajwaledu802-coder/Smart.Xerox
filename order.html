@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order - Smart Xerox</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2"
+                style="font-size: 1.5rem; font-weight: 700; color: var(--dark);">
+                <span style="color: var(--primary);">⚡</span> SmartXerox
+            </a>
+            <div class="nav-toggle" style="font-size: 1.5rem;">☰</div>
+            <div class="nav-links flex gap-4" id="nav-auth"></div>
+        </div>
+    </nav>
+
+    <main class="container mt-8 animate-fade">
+        <h1 class="mb-2" style="font-weight: 800;">Create Order</h1>
+        <p class="text-muted mb-8">Upload files, choose settings, and skip the line.</p>
+
+        <div class="grid gap-4" style="grid-template-columns: 1fr 350px;">
+
+            <!-- LEFT: STEPS -->
+            <div class="flex flex-col gap-8">
+
+                <!-- Step 1 -->
+                <div class="glass-panel p-8 step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="mb-4">Upload Documents</h3>
+
+                    <div class="upload-zone p-8 text-center" onclick="document.getElementById('fileInput').click()"
+                        style="cursor: pointer;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem; animation: float 3s unique;">☁️</div>
+                        <h4 style="color: var(--secondary);">Click to Browse Files</h4>
+                        <p class="text-sm text-muted">PDF, DOCX, JPG supported</p>
+                        <input type="file" id="fileInput" multiple hidden onchange="OrderUI.handleFiles(this)">
+                    </div>
+
+                    <div id="file-preview" class="mt-4 grid gap-2"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="glass-panel p-8 step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="mb-4">Print Options</h3>
+
+                    <div class="grid gap-4" style="grid-template-columns: 1fr 1fr;">
+                        <div>
+                            <label class="text-sm font-bold mb-2 block">Service Type</label>
+                            <select id="printType" class="input-field" onchange="OrderUI.calculate()">
+                                <option value="xerox_bw">Xerox B&W (₹2/pg)</option>
+                                <option value="print_bw">Laser Print B&W (₹3/pg)</option>
+                                <option value="print_color">Color Print (₹5/pg)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold mb-2 block">Sides</label>
+                            <select id="printSides" class="input-field" onchange="OrderUI.calculate()">
+                                <option value="single">Single Side</option>
+                                <option value="double">Back to Back</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold mb-2 block">Pages per Copy</label>
+                            <input type="number" id="pgCount" class="input-field" value="1" min="1"
+                                onchange="OrderUI.calculate()">
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold mb-2 block">No. of Copies</label>
+                            <input type="number" id="copyCount" class="input-field" value="1" min="1"
+                                onchange="OrderUI.calculate()">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="text-sm font-bold mb-2 block">Instructions</label>
+                        <textarea id="instructions" class="input-field" rows="2"
+                            placeholder="e.g. Spiral Binding needed..."></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT: SUMMARY -->
+            <div>
+                <div class="glass-panel p-8 payment-card" style="position: sticky; top: 100px;">
+                    <h3 class="mb-4">Checkout</h3>
+
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-muted">Subtotal</span>
+                        <span id="subDisplay">₹0</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b">
+                        <span class="text-muted">Tax / Fees</span>
+                        <span>₹0</span>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-6">
+                        <span style="font-size: 1.2rem; font-weight: 700;">Total</span>
+                        <strong style="font-size: 1.5rem; color: var(--primary-hover);">₹<span
+                                id="totalDisplay">0</span></strong>
+                    </div>
+
+                    <!-- Payment Logic -->
+                    <div class="border rounded p-4 bg-white mb-4">
+                        <label class="flex items-center gap-2 cursor-pointer" style="font-weight: 600;">
+                            <input type="checkbox" id="advanceCheck" onchange="OrderUI.toggleQR()">
+                            Pay 50% Advance
+                        </label>
+                        <p class="text-xs text-muted mt-1 ml-6">Required to confirm order.</p>
+
+                        <div id="qr-section" class="hidden mt-4 text-center animate-fade">
+                            <div class="qr-container mb-2">
+                                <img src="assets/qr_code.png" alt="QR Code" style="width: 100%;">
+                            </div>
+                            <p class="text-sm font-bold">Scan with Any UPI App</p>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-full shadow-lg" id="btn-submit" onclick="OrderUI.submit()"
+                        disabled>
+                        Confirm Order ➜
+                    </button>
+
+                    <div class="text-center mt-4 flex justify-center gap-2 opacity-50">
+                        <span>🔒 SSL Secure</span>
+                        <span>•</span>
+                        <span>⚡ Fast Print</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="js/app.js"></script>
+    <script>
+        const OrderUI = {
+            total: 0,
+            init() { this.calculate(); },
+
+            handleFiles(input) {
+                const viewer = document.getElementById('file-preview');
+                viewer.innerHTML = '';
+                Array.from(input.files).forEach(f => {
+                    const div = document.createElement('div');
+                    div.className = 'glass-panel p-4 flex justify-between items-center animate-slide';
+                    div.innerHTML = `
+                         <div class="flex items-center gap-2">
+                            <span style="background:var(--secondary); color:white; padding:5px; border-radius:4px;">PDF</span>
+                            <span class="font-medium">${f.name}</span>
+                        </div>
+                        <span class="text-xs text-muted">${(f.size / 1024).toFixed(1)} KB</span>
+                    `;
+                    viewer.appendChild(div);
+                });
+            },
+
+            calculate() {
+                const type = document.getElementById('printType').value;
+                const sides = document.getElementById('printSides').value;
+                const pgs = parseInt(document.getElementById('pgCount').value) || 1;
+                const copies = parseInt(document.getElementById('copyCount').value) || 1;
+
+                let rate = 2;
+                if (Store.prices[type]) {
+                    rate = Store.prices[type][sides === 'double' ? 'double' : 'single'];
+                }
+
+                let units = pgs;
+                if (sides === 'double') units = Math.ceil(pgs / 2);
+
+                this.total = units * rate * copies;
+
+                document.getElementById('totalDisplay').innerText = this.total;
+                document.getElementById('subDisplay').innerText = '₹' + this.total;
+
+                // Update Button
+                const advance = Math.ceil(this.total * 0.5);
+                const btn = document.getElementById('btn-submit');
+
+                if (document.getElementById('advanceCheck').checked) {
+                    btn.innerText = `Paid ₹${advance} - Place Order`;
+                    btn.classList.add('btn-primary');
+                    btn.classList.remove('btn-secondary');
+                } else {
+                    btn.innerText = `Pay Advance (₹${advance})`;
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-secondary'); // Greyed out look basically or inactive color
+                }
+            },
+
+            toggleQR() {
+                const checked = document.getElementById('advanceCheck').checked;
+                const qr = document.getElementById('qr-section');
+                const btn = document.getElementById('btn-submit');
+
+                if (checked) {
+                    qr.classList.remove('hidden');
+                    btn.disabled = false;
+                } else {
+                    qr.classList.add('hidden');
+                    btn.disabled = true;
+                }
+                this.calculate();
+            },
+
+            async submit() {
+                if (!Store.user) return Auth.openModal();
+                if (document.getElementById('fileInput').files.length === 0) return alert('Please upload a file!');
+
+                const files = document.getElementById('fileInput').files;
+                const fileNames = Array.from(files).map(f => f.name);
+
+                const orderData = {
+                    order_id: crypto.randomUUID(),
+                    user_id: Store.user.id,
+                    file_names: fileNames,
+                    print_type: document.getElementById('printType').value,
+                    pages: document.getElementById('pgCount').value,
+                    copies: document.getElementById('copyCount').value,
+                    amount_total: this.total,
+                    amount_paid: Math.ceil(this.total * 0.5),
+                    instructions: document.getElementById('instructions').value
+                };
+
+                const paymentData = { method: 'QR', amount: orderData.amount_paid, txn_id: 'TXN-' + Date.now() };
+
+                // Show spinner
+                const btn = document.getElementById('btn-submit');
+                const oldText = btn.innerText;
+                btn.innerText = 'Processing...';
+
+                const res = await API.createOrder({ order: orderData, payment: paymentData });
+
+                if (res.status === 'success') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert('Error');
+                    btn.innerText = oldText;
+                }
+            }
+        };
+        window.addEventListener('load', () => { if (window.App) App.init(); OrderUI.init(); });
+    </script>
+</body>
+
+</html>

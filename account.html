@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - Smart Xerox</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">Smart<span>Xerox</span></a>
+            <div class="nav-toggle">☰</div>
+            <div class="nav-links" id="nav-auth">
+                <a href="index.html">Home</a>
+                <a href="#" onclick="UI.showLogin()">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-8" id="account-main">
+        <!-- Content will be injected by JS based on Auth state -->
+        <div class="text-center py-8">Loading...</div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="js/app.js"></script>
+    <script>
+        const AccountPage = {
+            init() {
+                this.render();
+            },
+
+            render() {
+                const main = document.getElementById('account-main');
+                if (!App.user) {
+                    main.innerHTML = `
+                        <div class="card" style="max-width: 400px; margin: 2rem auto; text-align: center;">
+                            <h2 class="mb-4">Login</h2>
+                            <p class="mb-4 text-muted">Access your order history.</p>
+                            <button class="btn btn-primary btn-block" onclick="UI.showLogin()">Login with Phone</button>
+                        </div>
+                    `;
+                } else {
+                    const historyHtml = App.orders.length === 0
+                        ? '<p>No previous orders found.</p>'
+                        : App.orders.map(o => `
+                            <div class="card mb-4" style="border-left: 4px solid var(--secondary);">
+                                <div class="flex justify-between items-center mb-2">
+                                    <strong>#${o.id.split('-')[0]}</strong>
+                                    <span class="badge ${o.status === 'Completed' ? 'badge-completed' : 'badge-pending'}">${o.status}</span>
+                                </div>
+                                <p class="text-muted" style="font-size: 0.9rem;">${new Date(o.date).toLocaleString()}</p>
+                                <div class="mt-2">
+                                    ${o.items.map(i => `<div>- ${i.desc}</div>`).join('')}
+                                </div>
+                                <div class="mt-2 pt-2 border-t flex justify-between">
+                                    <span>Total: <strong>₹${o.total}</strong></span>
+                                    <span>Advance: ${o.advancePaid ? 'Paid' : 'Pending'}</span>
+                                </div>
+                            </div>
+                        `).join('');
+
+                    main.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h1>My Orders</h1>
+                            <button class="btn btn-outline btn-sm" onclick="App.logout()">Logout</button>
+                        </div>
+                        <p class="text-muted mb-4">Welcome back, ${App.user.name}</p>
+                        <div class="grid gap-4">
+                            ${historyHtml}
+                        </div>
+                    `;
+                }
+            }
+        };
+        AccountPage.init();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Smart Xerox</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar" style="background: var(--dark); color: white;">
+        <div class="container nav-container">
+            <a href="index.html" class="logo" style="color: white;">Smart<span>Xerox Admin</span></a>
+        </div>
+    </nav>
+
+    <main class="container mt-8" id="admin-main">
+        <div id="login-panel" class="card" style="max-width: 400px; margin: 2rem auto;">
+            <h2 class="text-center mb-4">Admin Access</h2>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="adminPass">
+            </div>
+            <button class="btn btn-primary btn-block" onclick="AdminPage.login()">Unlock</button>
+        </div>
+
+        <div id="dashboard-panel" style="display: none;">
+            <div class="flex justify-between items-center mb-4">
+                <h2>All Orders</h2>
+                <button class="btn btn-primary btn-sm" onclick="AdminPage.loadOrders()">Refresh</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table
+                    style="width: 100%; border-collapse: collapse; background: white; border-radius: 0.5rem; overflow: hidden; box-shadow: var(--shadow-sm);">
+                    <thead style="background: var(--light);">
+                        <tr>
+                            <th style="padding: 1rem; text-align: left;">ID</th>
+                            <th style="padding: 1rem; text-align: left;">User</th>
+                            <th style="padding: 1rem; text-align: left;">Items</th>
+                            <th style="padding: 1rem; text-align: left;">Files</th>
+                            <th style="padding: 1rem; text-align: left;">Total</th>
+                            <th style="padding: 1rem; text-align: left;">Status</th>
+                            <th style="padding: 1rem; text-align: left;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="js/app.js"></script>
+    <script>
+        const AdminPage = {
+            login() {
+                const pass = document.getElementById('adminPass').value;
+                if (pass === 'admin123') { // Simple client-side check
+                    document.getElementById('login-panel').style.display = 'none';
+                    document.getElementById('dashboard-panel').style.display = 'block';
+                    this.loadOrders();
+                } else {
+                    UI.toast('Invalid Password', 'error');
+                }
+            },
+
+            async loadOrders() {
+                UI.toast('Fetching orders...', 'info');
+                const tbody = document.getElementById('orders-table-body');
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Loading...</td></tr>';
+
+                const orders = await App.fetchAdminOrders();
+
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center p-4">No orders found (or API not connected).</td></tr>';
+                    return;
+                }
+
+                // Sort by date desc
+                orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                tbody.innerHTML = orders.map(o => {
+                    // Items is a stringified JSON
+                    let items = [];
+                    try { items = JSON.parse(o.items); } catch (e) { }
+                    const itemSummary = items.map(i => `${i.qty}x ${i.type}`).join(', ');
+
+                    return `
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 1rem;">${o.id.substring(0, 8)}</td>
+                            <td style="padding: 1rem;">
+                                <div><strong>${o.userName}</strong></div>
+                                <div class="text-muted" style="font-size: 0.8rem;">${o.userPhone}</div>
+                            </td>
+                            <td style="padding: 1rem;">${itemSummary}</td>
+                            <td style="padding: 1rem;">${o.fileNames}</td>
+                            <td style="padding: 1rem;">₹${o.total} <br> <small>${o.advancePaid === 'Yes' || o.advancePaid === true ? 'Paid 50%' : 'Unpaid'}</small></td>
+                            <td style="padding: 1rem;">
+                                <span class="badge ${o.status === 'Completed' ? 'badge-completed' : 'badge-pending'}">${o.status}</span>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <button class="btn btn-sm btn-outline" onclick="AdminPage.setStatus('${o.id}', 'Completed')">✓ Done</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+
+            async setStatus(id, status) {
+                if (!confirm(`Mark order ${id} as ${status}?`)) return;
+                await App.updateOrderStatus(id, status);
+                UI.toast('Status updated', 'success');
+                setTimeout(() => this.loadOrders(), 1000);
+            }
+        };
+    </script>
+</body>
+
+</html>

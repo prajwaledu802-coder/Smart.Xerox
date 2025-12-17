@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services & Rates | Smart Xerox</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-2"
+                style="font-size: 1.5rem; font-weight: 700; color: var(--dark);">
+                <span style="color: var(--primary);">⚡</span> SmartXerox
+            </a>
+            <div class="nav-toggle" style="font-size: 1.5rem;">☰</div>
+            <div class="nav-links flex gap-4" id="nav-auth"></div>
+        </div>
+    </nav>
+
+    <main class="container mt-8 animate-fade">
+        <div class="text-center mb-8">
+            <h1 style="font-weight: 800; font-size: 2.5rem;">Transparent Pricing</h1>
+            <p class="text-muted" style="font-size: 1.2rem;">Professional prints at student-friendly rates.</p>
+        </div>
+
+        <div class="grid gap-4 mb-8" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+
+            <!-- Card 1: Xerox -->
+            <div class="glass-panel p-8 hover-scale" style="border-top: 5px solid var(--primary);">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-xl">Xerox / Photocopy</h3>
+                        <p class="text-muted text-sm">Best for notes & assignments</p>
+                    </div>
+                    <div style="font-size: 2rem;">📄</div>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between py-2 border-b">
+                        <span>Single Side</span>
+                        <span class="font-bold">₹2.00 / pg</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span>Front & Back</span>
+                        <span class="font-bold">₹3.00 / sheet</span>
+                    </div>
+                </div>
+                <ul class="text-sm text-muted mb-6" style="list-style-type: '✓ '; padding-left: 1rem;">
+                    <li>75 GSM Standard Paper</li>
+                    <li>Sharp Black & White</li>
+                    <li>Quick Turnaround</li>
+                </ul>
+                <a href="order.html" class="btn btn-outline w-full">Order Photocopy</a>
+            </div>
+
+            <!-- Card 2: Printout (Best Value) -->
+            <div class="glass-panel p-8 hover-scale" style="border: 2px solid var(--secondary); position: relative;">
+                <div
+                    style="position: absolute; top: 0; right: 0; background: var(--secondary); color: white; padding: 0.25rem 0.75rem; border-bottom-left-radius: 8px; font-size: 0.8rem; font-weight: bold;">
+                    RECOMMENDED
+                </div>
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-xl">Laser Print</h3>
+                        <p class="text-muted text-sm">Direct from PDF/Word</p>
+                    </div>
+                    <div style="font-size: 2rem;">🖨️</div>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between py-2 border-b">
+                        <span>Single Side</span>
+                        <span class="font-bold">₹3.00 / pg</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span>Front & Back</span>
+                        <span class="font-bold">₹4.00 / sheet</span>
+                    </div>
+                </div>
+                <ul class="text-sm text-muted mb-6" style="list-style-type: '✓ '; padding-left: 1rem;">
+                    <li>High Contrast Laser Print</li>
+                    <li>Supports PDF, DOCX</li>
+                    <li>Spiral Binding Available</li>
+                </ul>
+                <a href="order.html" class="btn btn-primary w-full">Order Printout</a>
+            </div>
+
+            <!-- Card 3: Color -->
+            <div class="glass-panel p-8 hover-scale" style="border-top: 5px solid var(--accent);">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-xl">Color Print</h3>
+                        <p class="text-muted text-sm">For projects & posters</p>
+                    </div>
+                    <div class="font-size: 2rem;">🎨</div>
+                </div>
+                <div class="mb-4">
+                    <div class="flex justify-between py-2 border-b">
+                        <span>Single Side</span>
+                        <span class="font-bold">₹5.00 / pg</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span>Front & Back</span>
+                        <span class="font-bold">₹10.00 / sheet</span>
+                    </div>
+                </div>
+                <ul class="text-sm text-muted mb-6" style="list-style-type: '✓ '; padding-left: 1rem;">
+                    <li>Vibrant Colors</li>
+                    <li>Satin Finish Option</li>
+                    <li>A4 Size Standard</li>
+                </ul>
+                <a href="order.html" class="btn btn-outline w-full">Order Color</a>
+            </div>
+
+        </div>
+
+        <div class="glass-panel p-8 text-center mt-8">
+            <h3>Need Bulk Printing?</h3>
+            <p class="text-muted mb-4">We offer special discounts for order over 500 pages.</p>
+            <a href="https://wa.me/919916220476" class="btn btn-secondary">Contact on WhatsApp</a>
+        </div>
+    </main>
+
+    <footer class="text-center py-8 text-muted">
+        <p>&copy; 2025 Smart Xerox.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>if (window.App) App.init();</script>
+</body>
+
+</html>

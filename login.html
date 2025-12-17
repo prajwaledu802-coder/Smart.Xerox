@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Smart Xerox</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        .split-screen {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .left-panel {
+            background: var(--dark);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: white;
+            padding: 2rem;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.6;
+            animation: floatShape 10s infinite alternate;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: -50px;
+            left: -50px;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--secondary);
+            bottom: -100px;
+            right: -100px;
+            animation-duration: 12s;
+        }
+
+        @keyframes floatShape {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(30px, 50px);
+            }
+        }
+
+        .right-panel {
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            animation: slideInbox 0.6s ease-out;
+        }
+
+        @keyframes slideInbox {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media(max-width: 768px) {
+            .split-screen {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="split-screen">
+        <div class="left-panel">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div style="z-index: 10; text-align: center;">
+                <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1rem;">
+                    Welcome<br><span style="color: var(--primary);">Back.</span>
+                </h1>
+                <p style="font-size: 1.2rem; opacity: 0.8;">Login to print documents, view history,<br>and download
+                    invoices.</p>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <a href="index.html"
+                style="position: absolute; top: 2rem; left: 2rem; font-weight: 700; color: var(--dark);">← Home</a>
+
+            <div class="auth-container">
+                <div class="mb-8">
+                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Login</h2>
+                    <p class="text-muted">Don't have an account? <a href="signup.html"
+                            style="color: var(--secondary); font-weight: 600;">Sign Up</a></p>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="font-bold text-sm mb-2 block">Mobile Number</label>
+                    <input type="tel" id="mobileInput" class="input-field" placeholder="9912345678"
+                        style="padding: 1rem; font-size: 1.1rem;">
+                </div>
+
+                <div id="otp-group" class="form-group mb-4 hidden animate-slide">
+                    <label class="font-bold text-sm mb-2 block">Enter OTP</label>
+                    <input type="text" id="otpInput" class="input-field" placeholder="1234"
+                        style="padding: 1rem; font-size: 1.1rem; letter-spacing: 5px; text-align: center;">
+                </div>
+
+                <button class="btn btn-primary w-full shadow-lg" id="actionBtn" onclick="LoginPage.sendOtp()">
+                    Get Login OTP
+                </button>
+
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-muted">Or</p>
+                    <button class="btn btn-outline w-full mt-2" onclick="LoginPage.googleLogin()">
+                        Continue with Google
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        const LoginPage = {
+            sendOtp() {
+                const mobile = document.getElementById('mobileInput').value;
+                if (mobile.length < 10) return alert('Please enter a valid number');
+
+                const btn = document.getElementById('actionBtn');
+                btn.innerHTML = 'Sending...';
+
+                setTimeout(() => {
+                    document.getElementById('otp-group').classList.remove('hidden');
+                    btn.innerHTML = 'Verify OTP';
+                    btn.onclick = () => this.verifyOtp(mobile);
+                    alert('Smart Xerox Login OTP: 1234');
+                }, 1000);
+            },
+
+            verifyOtp(mobile) {
+                const otp = document.getElementById('otpInput').value;
+                if (otp !== '1234') return alert('Incorrect OTP');
+
+                Auth.processLogin({ mobile, name: 'Student User', provider: 'mobile' });
+            },
+
+            googleLogin() {
+                Auth.processLogin({ mobile: '9999999999', name: 'Google User', provider: 'google', email: 'user@gmail.com' });
+            }
+        };
+    </script>
+</body>
+
+</html>
